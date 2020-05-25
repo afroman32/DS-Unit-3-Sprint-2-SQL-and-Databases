@@ -3,7 +3,7 @@ import sqlite3
 
 # construct a path to wherever your database exists
 #DB_FILEPATH = "chinook.db"
-DB_FILEPATH = os.path.join(os.path.dirname(__file__), "..", "data", "rpg_db.sqlite3")
+DB_FILEPATH = os.path.join(os.path.dirname(__file__), "rpg_db.sqlite3")
 
 connection = sqlite3.connect(DB_FILEPATH)
 connection.row_factory = sqlite3.Row #allow us to reference rows as dictionaries
