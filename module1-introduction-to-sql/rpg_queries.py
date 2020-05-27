@@ -52,10 +52,6 @@ items = """
             GROUP BY 1
             )
         """
-weapon_count = "SELECT count(item_ptr_id) as WeaponCount FROM armory_weapon"
-non_weapon_count = """
-
-                    """
 item_per_char = """
                 SELECT 
                 c.character_id
