@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import create_engine
 import pandas as pd
 import psycopg2
 from psycopg2.extras import DictCursor, execute_values
@@ -14,47 +15,26 @@ DB_HOST = os.getenv("DB_HOST", default = "OOPS")
 DB_FILEPATH = os.path.join(os.path.dirname(__file__), "titanic.csv")
 df = pd.read_csv(DB_FILEPATH)
 
-connection = psycopg2.connect(dbname= DB_NAME, user= DB_USER, password= DB_PASSWORD, host= DB_HOST)
-cursor = connection.cursor(cursor_factory= DictCursor)
+df.columns = ['survived', 'pclass', 'name', 'sex', 'age', 'siblings_spouses_aboard', 'parents_children_aboard', 'fare']
 
-# breakpoint()
-query = f"""
-DROP TABLE titanic;
-CREATE TABLE IF NOT EXISTS titanic (
-    id SERIAL PRIMARY KEY,
-    survived numpy.int64,
-    pclass numpy.int64,
-    name varchar (40) NOT NULL,
-    sex varchar (40) NOT NULL,
-    age numpy.int64,
-    siblings_spouses_aboard numpy.int64,
-    parents_children_aboard numpy.int64,
-    fare numpy.float64
-);
-"""
-print("SQL", query)
-cursor.execute(query)
+print(df.columns)
 
-# insertion_query = f'INSERT INTO test_table2 (name, data) VALUES %s'
+sql_url = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
+engine = create_engine(sql_url)
 
-# records = df.to_records(index=False)
-# result = list(records)
-# execute_values(cursor, insertion_query, result)
+df.to_sql('titanic', engine, if_exists='replace')
 
-# actually save the transactions
-connection.commit()
-
-cursor.close()
-connection.close()
+# cursor.close()
+# connection.close()
 exit()
 
 # connection = sqlite3.connect(SQ_FILEPATH)
 # connection.row_factory = sqlite3.Rows
 
-insertion_query = f'INSERT INTO test_table2 (name, data) VALUES %s'
+# insertion_query = f'INSERT INTO test_table2 (name, data) VALUES %s'
 
-records = df.to_dict('records')
-list_of_tuples = [{r[0], r[1]} for r in records]
-execute_values(cursor, insertion_query, list_of_tuples)
+# records = df.to_dict('records')
+# list_of_tuples = [{r[0], r[1]} for r in records]
+# execute_values(cursor, insertion_query, list_of_tuples)
 
-cursor = connection.cursor()
+# cursor = connection.cursor()
