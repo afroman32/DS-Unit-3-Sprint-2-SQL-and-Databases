@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import psycopg2
-from psycopg2.extras import DictCursor
+from psycopg2.extras import DictCursor, execute_values
 from dotenv import load_dotenv
 import json
 
@@ -50,26 +50,6 @@ print("SQL", query)
 cursor.execute(query)
 
 my_dict = {"a": 1, "b": ['dog', 'cat', 42], "c": 'true'}
-
-insertion_query = 'INSERT INTO test_table2 (name, data) VALUES (%s, %s)'
-cursor.execute(insertion_query,
-('A rowwwww', 'null')
-)
-
-cursor.execute(insertion_query,
-    ('Another row, with JSON', json.dumps(my_dict))
-
-)
-# actually save the transactions
-connection.commit()
-
-cursor.close()
-connection.close()
-exit()
-
-
-
-
 insertion_query = f'INSERT INTO test_table2 (name, data) VALUES %s'
 
 df = pd.DataFrame([
@@ -79,10 +59,9 @@ df = pd.DataFrame([
     ['Pandas row', 'null']
 ])
 
-records = df.to_dict('records')
-list_of_tuples = [{r[0], r[1]} for r in records]
-
-# execute_values(cursor, insertion_query, list_of_tuples)
+records = df.to_records(index=False)
+result = list(records)
+execute_values(cursor, insertion_query, list)
 
 # query the table
 print('---------------------')
